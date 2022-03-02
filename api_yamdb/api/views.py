@@ -1,38 +1,39 @@
+from django.shortcuts import get_object_or_404
+from django.core.mail import EmailMessage
+from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
 
-from django.shortcuts import get_object_or_404
-
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import permissions, status, viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from api.filters import TitleFilter
 from api.mixins import CategoryGenreMixinViewSet
-from api.permissions import AdminOrReadOnly, AuthorStaffOrReadOnly, IsAuthorOrReadOnly, IsRoleAdmin, IsRoleModerator
-from api.serializers import (
-    CategorySerializer, GenreSerializer, TitleSerializer,
-    ReviewSerializer, CommentSerializer, TitleCreateSerializer
-)
-from titcatgen.models import Category, Genre, Title
-from reviews.models import Review
-from django.core.mail import EmailMessage
-from django.db.models import Avg
-from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions, status, viewsets
-from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
-from rest_framework_simplejwt.tokens import RefreshToken
-
-from users.models import User
-from .permissions import (AdminOnly,)
+from api.permissions import (AdminOrReadOnly,
+                             AuthorStaffOrReadOnly,
+                             IsAuthorOrReadOnly,
+                             IsRoleAdmin,
+                             IsRoleModerator,
+                             AdminOnly,)
 from .serializers import (GetTokenSerializer,
                           NotAdminSerializer,
                           SignUpSerializer,
-                          UsersSerializer)
+                          UsersSerializer,
+                          CategorySerializer,
+                          GenreSerializer,
+                          TitleSerializer,
+                          ReviewSerializer,
+                          CommentSerializer,
+                          TitleCreateSerializer)
+from titcatgen.models import Category, Genre, Title
+from reviews.models import Review
+from users.models import User
 
 
 class TitleViewSet(ModelViewSet):
@@ -194,14 +195,6 @@ class UsersViewSet(viewsets.ModelViewSet):
 
 
 class APIGetToken(APIView):
-    """
-    Получение JWT-токена в обмен на username и confirmation code.
-    Права доступа: Доступно без токена. Пример тела запроса:
-    {
-        "username": "string",
-        "confirmation_code": "string"
-    }
-    """
     def post(self, request):
         serializer = GetTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -222,15 +215,6 @@ class APIGetToken(APIView):
 
 
 class APISignup(APIView):
-    """
-    Получить код подтверждения на переданный email. Права доступа: Доступно без
-    токена. Использовать имя 'me' в качестве username запрещено. Поля email и
-    username должны быть уникальными. Пример тела запроса:
-    {
-        "email": "string",
-        "username": "string"
-    }
-    """
     permission_classes = (permissions.AllowAny,)
 
     @staticmethod
