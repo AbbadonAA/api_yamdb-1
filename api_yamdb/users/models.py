@@ -3,7 +3,7 @@ from django.db import models
 
 from .validators import validate_username
 
-USER = 'user'
+
 
 ROLES = (
         ('user', 'Пользователь'),
@@ -29,7 +29,7 @@ class User(AbstractUser):
         'роль',
         max_length=20,
         choices=ROLES,
-        default=USER,
+        default='user',
         blank=True
     )
     confirmation_code = models.CharField(
