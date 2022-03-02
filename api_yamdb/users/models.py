@@ -26,30 +26,25 @@ class User(AbstractUser):
         null=False
     )
     role = models.CharField(
-        'роль',
         max_length=20,
         choices=ROLES,
         default='user',
         blank=True
     )
     confirmation_code = models.CharField(
-        'код подтверждения',
         max_length=255,
         null=True,
         blank=False,
         default='XXXX'
     )
     bio = models.TextField(
-        'биография',
         blank=True,
     )
     first_name = models.CharField(
-        'имя',
         max_length=150,
         blank=True
     )
     last_name = models.CharField(
-        'фамилия',
         max_length=150,
         blank=True
     )
@@ -69,8 +64,6 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ('id',)
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
 
     def __str__(self):
         return self.username

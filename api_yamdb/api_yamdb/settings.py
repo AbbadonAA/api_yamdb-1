@@ -22,8 +22,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'reviews',
     'users',
     'api',
+    'titcatgen',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
@@ -126,7 +128,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'gmail.com'
 
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 
@@ -139,3 +141,6 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 AUTH_USER_MODEL = 'users.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
