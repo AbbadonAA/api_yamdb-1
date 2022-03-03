@@ -14,9 +14,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .filters import TitleFilter
 from .mixins import CategoryGenreMixinViewSet
 from .permissions import (AdminAuthorizedOrReadOnly,
-                         AuthorModeratorAdminOrReadOnly,
-                         AdminOrUserOrReadOnly,
-                         AuthorizedOrReadOnly)
+                          AuthorModeratorAdminOrReadOnly,
+                          AdminOrUserOrReadOnly,
+                          AuthorizedOrReadOnly)
 from .serializers import (GetTokenSerializer,
                           NotAdminSerializer,
                           SignUpSerializer,
