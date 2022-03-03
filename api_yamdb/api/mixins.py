@@ -4,7 +4,7 @@ from rest_framework.mixins import (
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import GenericViewSet
 
-from api.permissions import AdminOrReadOnly
+from .permissions import AdminAuthorizedOrReadOnly
 
 
 class CategoryGenreMixinViewSet(
@@ -12,12 +12,10 @@ class CategoryGenreMixinViewSet(
         CreateModelMixin,
         DestroyModelMixin,
         GenericViewSet):
-    """Миксин для классов жанра и категории."""
     queryset = None
     serializer_class = None
-    pagination_class = PageNumberPagination
     filter_backends = [SearchFilter]
     search_fields = ['=name']
     lookup_field = 'slug'
-    permission_classes = (AdminOrReadOnly,)
+    permission_classes = (AdminAuthorizedOrReadOnly,)
     pagination_class = PageNumberPagination

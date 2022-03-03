@@ -4,7 +4,8 @@ from django.db import models
 from titcatgen.models import Title
 from users.models import User
 
-SCORE = [(i, str(i)) for i in range(1,11)]
+SCORE = [(i, str(i)) for i in range(1, 11)]
+
 
 class Review(models.Model):
     score = models.CharField(
@@ -42,6 +43,7 @@ class Review(models.Model):
     def __str__(self):
         return f'{self.author} - {self.text[:15]}'
 
+
 class Comment(models.Model):
     review = models.ForeignKey(
         Review,
@@ -56,7 +58,6 @@ class Comment(models.Model):
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
-        db_index=True
     )
 
     class Meta:

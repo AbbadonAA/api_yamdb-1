@@ -4,12 +4,12 @@ from django.db import models
 from .validators import validate_username
 
 
-
 ROLES = (
-        ('user', 'Пользователь'),
-        ('moderator', 'Модератор'),
-        ('admin', 'Администратор'),
-    )
+    ('user', 'Пользователь'),
+    ('moderator', 'Модератор'),
+    ('admin', 'Администратор'),
+)
+
 
 class User(AbstractUser):
     username = models.CharField(
@@ -48,7 +48,6 @@ class User(AbstractUser):
         max_length=150,
         blank=True
     )
-    
 
     @property
     def is_user(self):

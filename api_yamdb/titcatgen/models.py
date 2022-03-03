@@ -1,17 +1,5 @@
-from datetime import datetime
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
-
-def this_year():
-    return datetime.now().year
-
-
-def max_value_this_year(value):
-    return MaxValueValidator(
-        this_year(),
-        'Нельзя добавлять произведения из будущего.'
-    )(value)
+from .validators import max_value_this_year, min_value_first_year
 
 
 class Category(models.Model):
@@ -41,10 +29,7 @@ class Title(models.Model):
     year = models.PositiveSmallIntegerField(
         validators=[
             max_value_this_year,
-            MinValueValidator(
-                1,
-                'Наша эра начинается с первого года.'
-            ),
+            min_value_first_year
         ],
     )
     category = models.ForeignKey(
