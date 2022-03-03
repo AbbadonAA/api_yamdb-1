@@ -11,12 +11,12 @@ from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.filters import TitleFilter
-from api.mixins import CategoryGenreMixinViewSet
-from api.permissions import (AdminAuthorizedOrReadOnly,
-                             AuthorModeratorAdminOrReadOnly,
-                             AdminOrUserOrReadOnly,
-                             AuthorizedOrReadOnly)
+from .filters import TitleFilter
+from .mixins import CategoryGenreMixinViewSet
+from .permissions import (AdminAuthorizedOrReadOnly,
+                         AuthorModeratorAdminOrReadOnly,
+                         AdminOrUserOrReadOnly,
+                         AuthorizedOrReadOnly)
 from .serializers import (GetTokenSerializer,
                           NotAdminSerializer,
                           SignUpSerializer,
