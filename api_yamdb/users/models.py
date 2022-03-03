@@ -3,13 +3,13 @@ from django.db import models
 
 from .validators import validate_username
 
-USER = 'user'
 
 ROLES = (
-        ('user', 'Пользователь'),
-        ('moderator', 'Модератор'),
-        ('admin', 'Администратор'),
-    )
+    ('user', 'Пользователь'),
+    ('moderator', 'Модератор'),
+    ('admin', 'Администратор'),
+)
+
 
 class User(AbstractUser):
     username = models.CharField(
@@ -26,34 +26,28 @@ class User(AbstractUser):
         null=False
     )
     role = models.CharField(
-        'роль',
         max_length=20,
         choices=ROLES,
-        default=USER,
+        default='user',
         blank=True
     )
     confirmation_code = models.CharField(
-        'код подтверждения',
         max_length=255,
         null=True,
         blank=False,
         default='XXXX'
     )
     bio = models.TextField(
-        'биография',
         blank=True,
     )
     first_name = models.CharField(
-        'имя',
         max_length=150,
         blank=True
     )
     last_name = models.CharField(
-        'фамилия',
         max_length=150,
         blank=True
     )
-    
 
     @property
     def is_user(self):
@@ -69,8 +63,6 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ('id',)
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
 
     def __str__(self):
         return self.username
