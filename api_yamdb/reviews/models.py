@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from titcatgen.models import Title
 from users.models import User
+from .validators import validate_score
 
 SCORE = [(i, str(i)) for i in range(1, 11)]
 
@@ -13,6 +14,9 @@ class Review(models.Model):
         choices=SCORE,
         blank=False,
         null=False,
+        validators=[
+            validate_score,
+        ]
     )
     title = models.ForeignKey(
         to=Title,

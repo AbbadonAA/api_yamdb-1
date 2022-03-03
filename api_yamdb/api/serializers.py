@@ -64,11 +64,6 @@ class ReviewSerializer(ModelSerializer):
         read_only=True
     )
 
-    def validate_score(self, value):
-        if 0 > value > 10:
-            raise ValidationError('Оценка по 10-бальной шкале!')
-        return value
-
     def validate(self, data):
         request = self.context['request']
         author = request.user
