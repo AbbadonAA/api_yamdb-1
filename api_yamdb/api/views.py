@@ -149,7 +149,6 @@ class APISignup(APIView):
     @staticmethod
     def send_email(data):
         email = EmailMessage(
-            subject=data['email_subject'],
             body=data['email_body'],
             to=[data['to_email']]
         )
@@ -166,7 +165,6 @@ class APISignup(APIView):
         data = {
             'email_body': email_body,
             'to_email': user.email,
-            'email_subject': 'Код подтвержения для доступа к API!'
         }
         self.send_email(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
