@@ -1,9 +1,7 @@
-from django.db.models import Avg
-from django.forms import IntegerField
 from rest_framework.serializers import (
-    SerializerMethodField,
     ModelSerializer,
-    ValidationError
+    ValidationError,
+    Serializer
 )
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
@@ -12,7 +10,6 @@ from rest_framework.relations import SlugRelatedField
 from titcatgen.models import Category, Genre, Title
 from reviews.models import Review, Comment
 from users.models import User
-from .validators import validate, author, one, two, three
 
 
 class CategorySerializer(ModelSerializer):
@@ -63,6 +60,7 @@ class ReviewSerializer(ModelSerializer):
         read_only=True,
     )
 
+    # нужен котекст, он не передаётся
     def validate(self, data):
         request = self.context['request']
         title_id = self.context.get('view').kwargs.get('title_id')
@@ -75,7 +73,6 @@ class ReviewSerializer(ModelSerializer):
             ).exists()
         ):
             raise ValidationError('Один отзыв, не более!')
-        print(data)
         return data
 
     class Meta:
@@ -114,7 +111,7 @@ class NotAdminSerializer(ModelSerializer):
         read_only_fields = ('role',)
 
 
-class GetTokenSerializer(ModelSerializer):
+class GetTokenSerializer(Serializer):
     username = serializers.CharField(
         required=True)
     confirmation_code = serializers.CharField(
