@@ -1,4 +1,5 @@
 from django.db import models
+
 from .validators import max_value_this_year, min_value_first_year
 
 

@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
 from django_filters.rest_framework import DjangoFilterBackend
@@ -33,7 +34,9 @@ from users.models import User
 
 
 class TitleViewSet(ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')
+    ).all().order_by('name')
     serializer_class = TitleSerializer
     permission_classes = (AdminAuthorizedOrReadOnly,)
     pagination_class = PageNumberPagination
@@ -80,12 +83,12 @@ class CommentViewSet(ModelViewSet):
     )
 
     def get_queryset(self):
-        review_id = self.kwargs.get('review_id')
+        review_id = self.kwargs.get('review_id', 'title__id')
         review = get_object_or_404(Review, id=review_id)
         return review.comments.all()
 
     def perform_create(self, serializer):
-        review_id = self.kwargs.get('review_id')
+        review_id = self.kwargs.get('review_id', 'title__id')
         review = get_object_or_404(Review, id=review_id)
         serializer.save(author=self.request.user, review=review)
 
@@ -129,7 +132,8 @@ class APIGetToken(APIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         try:
-            user = User.objects.get(username=data['username'])
+            user = User.objects.get(
+                username=data['username'],)
         except User.DoesNotExist:
             return Response(
                 {'username': 'Пользователь не найден!'},
@@ -149,7 +153,6 @@ class APISignup(APIView):
     @staticmethod
     def send_email(data):
         email = EmailMessage(
-            subject=data['email_subject'],
             body=data['email_body'],
             to=[data['to_email']]
         )
@@ -166,7 +169,6 @@ class APISignup(APIView):
         data = {
             'email_body': email_body,
             'to_email': user.email,
-            'email_subject': 'Код подтвержения для доступа к API!'
         }
         self.send_email(data)
         return Response(serializer.data, status=status.HTTP_200_OK)

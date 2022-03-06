@@ -1,8 +1,7 @@
-from django.db.models import Avg
 from rest_framework.serializers import (
-    SerializerMethodField,
     ModelSerializer,
-    ValidationError
+    ValidationError,
+    Serializer
 )
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
@@ -42,43 +41,45 @@ class TitleCreateSerializer(ModelSerializer):
 
 
 class TitleSerializer(ModelSerializer):
-    rating = SerializerMethodField()
     category = CategorySerializer()
     genre = GenreSerializer(many=True)
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Title
         fields = '__all__'
 
-    def get_rating(self, obj):
-        return obj.reviews.aggregate(average=Avg('score'))['average']
-
 
 class ReviewSerializer(ModelSerializer):
     title = SlugRelatedField(
         slug_field='name',
-        read_only=True
+        read_only=True,
     )
     author = SlugRelatedField(
         slug_field='username',
-        read_only=True
+        read_only=True,
     )
 
+    # нужен котекст, он не передаётся
     def validate(self, data):
         request = self.context['request']
-        author = request.user
         title_id = self.context.get('view').kwargs.get('title_id')
         title = get_object_or_404(Title, pk=title_id)
         if (
             request.method == 'POST'
-            and Review.objects.filter(title=title, author=author).exists()
+            and Review.objects.filter(
+                title=title,
+                author=request.user
+            ).exists()
         ):
             raise ValidationError('Один отзыв, не более!')
         return data
 
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = (
+            'id', 'author', 'score', 'pub_date', 'text', 'title'
+        )
 
 
 class CommentSerializer(ModelSerializer):
@@ -110,7 +111,7 @@ class NotAdminSerializer(ModelSerializer):
         read_only_fields = ('role',)
 
 
-class GetTokenSerializer(ModelSerializer):
+class GetTokenSerializer(Serializer):
     username = serializers.CharField(
         required=True)
     confirmation_code = serializers.CharField(
