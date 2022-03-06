@@ -1,4 +1,5 @@
 from django.db.models import Avg
+from django.forms import IntegerField
 from rest_framework.serializers import (
     SerializerMethodField,
     ModelSerializer,
@@ -11,6 +12,7 @@ from rest_framework.relations import SlugRelatedField
 from titcatgen.models import Category, Genre, Title
 from reviews.models import Review, Comment
 from users.models import User
+from .validators import validate, author, one, two, three
 
 
 class CategorySerializer(ModelSerializer):
@@ -42,26 +44,23 @@ class TitleCreateSerializer(ModelSerializer):
 
 
 class TitleSerializer(ModelSerializer):
-    rating = SerializerMethodField()
     category = CategorySerializer()
     genre = GenreSerializer(many=True)
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Title
         fields = '__all__'
 
-    def get_rating(self, obj):
-        return obj.reviews.aggregate(average=Avg('score'))['average']
-
 
 class ReviewSerializer(ModelSerializer):
     title = SlugRelatedField(
         slug_field='name',
-        read_only=True
+        read_only=True,
     )
     author = SlugRelatedField(
         slug_field='username',
-        read_only=True
+        read_only=True,
     )
 
     def validate(self, data):
@@ -76,11 +75,14 @@ class ReviewSerializer(ModelSerializer):
             ).exists()
         ):
             raise ValidationError('Один отзыв, не более!')
+        print(data)
         return data
 
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = (
+            'id', 'author', 'score', 'pub_date', 'text', 'title'
+        )
 
 
 class CommentSerializer(ModelSerializer):

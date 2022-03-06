@@ -1,3 +1,5 @@
+from turtle import title
+from django.db.models import Avg, F
 from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
 from django_filters.rest_framework import DjangoFilterBackend
@@ -33,7 +35,9 @@ from users.models import User
 
 
 class TitleViewSet(ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(
+        rating=Avg(F('reviews__score'))
+    ).all()
     serializer_class = TitleSerializer
     permission_classes = (AdminAuthorizedOrReadOnly,)
     pagination_class = PageNumberPagination
@@ -129,7 +133,8 @@ class APIGetToken(APIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         try:
-            user = User.objects.get(username=data['username'])
+            user = User.objects.get(
+                username=data['username'],)
         except User.DoesNotExist:
             return Response(
                 {'username': 'Пользователь не найден!'},

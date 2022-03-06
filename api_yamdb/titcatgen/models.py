@@ -1,4 +1,5 @@
 from django.db import models
+
 from .validators import max_value_this_year, min_value_first_year
 
 
@@ -45,9 +46,6 @@ class Title(models.Model):
         blank=True,
     )
     description = models.TextField(blank=True,)
-
-    class Meta:
-        ordering = ('name',)
 
     def __str__(self):
         return self.name
