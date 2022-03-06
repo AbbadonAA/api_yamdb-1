@@ -4,7 +4,7 @@ from rest_framework import permissions
 class AdminAuthorizedOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return (
-            request.method in 'GET'
+            request.method == 'GET'
             or request.user.is_authenticated and request.user.is_admin
         )
 
