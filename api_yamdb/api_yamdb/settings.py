@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'users',
     'api',
     'titcatgen',
+    'dotenv',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
